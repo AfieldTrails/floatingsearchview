@@ -16,8 +16,12 @@ public class SearchInputView extends EditText {
         public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
 
             if (keyCode == KeyEvent.KEYCODE_ENTER && mSearchKeyListener != null) {
-                mSearchKeyListener.onSearchKeyClicked();
-                return true;
+                // Android (at least the emulator) wants to keep sending old search events
+                // when re-focusing. Ignore old down-time events.
+                if (Math.abs(keyEvent.getDownTime() - keyEvent.getEventTime()) < 500) {
+                    mSearchKeyListener.onSearchKeyClicked();
+                   return true;
+                }
             }
             return false;
         }
